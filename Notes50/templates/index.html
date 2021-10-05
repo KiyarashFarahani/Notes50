@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" style='height: 100vh'>
+<head>
+  <style>html{visibility: hidden;opacity:0;}</style>
+  <meta charset="UTF-8">
+  <title>Untitled-Note</title>
+  <script src="https://kit.fontawesome.com/412250c408.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body style='margin: 0 0 0 0; height: 100%;' class="">
+<div id="page" class="{{theme}}" style="width: 100%; height: 100%;">
+<div id="darker" onclick="close_menu();">
+    <div class='box' id='leftbox'>
+		<div class='box' id='column'>
+          <form style="height:100%; width:100%">
+            <h4 id="newnote">New Note</h4>
+            <button id="newbutton" formaction="/newnote"><i class="fas fa-plus"></i></button>
+          </form>
+        </div>
+    	</br>
+		<table>
+        	<thead></thead>
+			<tbody>
+				{% for note in thenotes %}
+				{% set thetitle = "title_"+note.id %}
+				{% set thenote = "note_"+note.id %}
+				{% set div_id = "div_"+note.id %}
+
+						{% if note.title == "" and note.note == "" %}
+
+						<div class='column2selected' id={{div_id}} onclick='opener("{{note.id}}"); title_changer();'>
+							<p style='margin: 3% 0 0 5%; font-size: 20px ;' id={{thetitle}}>New Note</p>
+							<p style='margin: 1% 0 0 5%; padding-bottom:3%; font-size: 13px ;width: 75%;height: 15%;overflow: hidden; white-space: nowrap;' id={{thenote}}>{{ note.note }}</p>
+						</div>
+
+						{% else %}
+						<div class='column2unselected' id={{div_id}} onclick='opener("{{note.id}}"); title_changer();'>
+							<p style='margin: 3% 0 0 5%; font-size: 20px ;' id={{thetitle}}>{{ note.title }}</p>
+							<p style='margin: 1% 0 0 5%; padding-bottom:3%; font-size: 13px ;width: 75%;height: 15%;overflow: hidden; white-space: nowrap;' id={{thenote}}>{{ note.note }}</p>
+						</div>
+						{% endif %}
+
+				{% endfor %}
+
+
+			</tbody>
+		</table>
+    </div>
+</div>
+
+
+<div class="nav">
+
+    <button id="menubutton" onclick="open_menu();"><i class="fas fa-bars"></i></button>
+
+    <div class="dropdown" id="dropdown-one">
+    	<h3 class="dropper">Theme</h3>
+        <div class="dropdown-content" id="dropdown1">
+            <h4 class="themechoise" onclick="themechanger(0);">Blue</h4>
+            <h4 class="themechoise" onclick="themechanger(1);">Purple</h4>
+            <h4 class="themechoise" onclick="themechanger(2);">Green</h4>
+        </div>
+    </div>
+
+	<div class="dropdown" style="margin-left: 70%;">
+		<h3 class="dropper">{{username}}</h3>
+		<div class="dropdown-content">
+			<h4><a href="/logout">Logout</a></h4>
+		</div>
+	</div>
+
+</div>
+
+<div class='container'>
+    <div class='box' id='rightbox'>
+      <form id="form" method="post">
+
+        <input name="title" onchange="title_changer();" placeholder="Title" id="inputtitle" autocomplete="off">
+        <input style="width:0%; height:0%; display:none" id="themestatus" name="themestatus">
+        <input style="width:0%; height:0%; display:none" id="formnoteid" name="formnoteid">
+        <button id="savebutton" formaction="/save"><i class="fas fa-save"></i></button>
+        <a id="sharebutton" href="#popup1"><i class="fas fa-share" style="margin-top: 25%;"></i></a>
+        <button id="deletebutton" formaction="/delete"><i class="fas fa-trash"></i></button>
+        <button id="deletebutton" onclick="paste();return false;"><i class="fas fa-paste"></i></button>
+		</br>
+        <textarea name="note" id="inputnote" autocomplete="off" placeholder="Write Your Note" cols="40" rows="5"></textarea>
+
+      </form>
+    </div>
+</div>
+
+</div>
+
+
+<div id="popup1" class="overlay">
+	<div class="popup-window">
+
+		<h2>Share This Note</h2>
+		<a class="close" href="#">&times;</a>
+		<div class="content">
+			<p>Click to copy the link with default id or set a new id for this note.</p>
+		</div>
+
+        <div class="popup">
+          <button id="copybutton" onclick="share();">Copy</button>
+          <span class="popuptext" id="myPopup">Copied!</span>
+        </div>
+        <br>
+        <p style="margin-top: 2%;">or</p>
+        <form method="post" action="/application" autocomplete="off">
+
+            <input id="idinput" placeholder="Enter the new id" name="idinput" required>
+            <button type="submit" id="applybutton">Apply</button>
+            <input style="width:0%; height:0%; display:none" id="formnoteid2" name="formnoteid2">
+
+        </form>
+    </div>
+</div>
+
+
+</body>
+
+
+<script>
+
+    function themechanger(themeid){
+        if(themeid == 0){
+        document.getElementById("page").className = "blue";
+        document.getElementById("themestatus").value = "blue";
+        }
+        else if (themeid == 1){
+        document.getElementById("page").className = "purple";
+        document.getElementById("themestatus").value = "purple";
+        }
+        else if (themeid == 2){
+        document.getElementById("page").className = "green";
+        document.getElementById("themestatus").value = "green";
+
+        }
+    }
+
+    function title_changer(){
+        var title = document.getElementById("inputtitle").value;
+        if (title != ""){
+          document.title = title;
+        }else{
+          document.title = "Untitled Note";
+        }
+    }
+
+    function opener(id_code){
+
+        title_id = "title_"+id_code;
+        note_id = "note_"+id_code;
+        div_id = "div_"+id_code;
+        var shareid = id_code;
+
+        if (document.getElementById(div_id).className == "column2unselected"){
+
+          try{
+            var classname = document.getElementsByClassName("column2selected")[0];
+            classname.className = "column2unselected";
+          }
+          finally{
+
+            document.getElementById(div_id).className = "column2selected";
+            document.getElementById("inputtitle").value = document.getElementById(title_id).innerHTML;
+            document.getElementById("inputnote").value = document.getElementById(note_id).innerHTML;
+            document.getElementById("formnoteid").value = id_code;
+            document.getElementById("formnoteid2").value = id_code;
+
+          }
+        }
+    }
+
+
+    function share(){
+
+        var url = "https://ide-1d3aad037e28438882427a2dc528f83d-8080.cs50.ws/" + document.getElementById("formnoteid").value;
+        navigator.clipboard.writeText(url);
+        var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
+
+    }
+
+    function open_menu(){
+        let box = document.getElementById("leftbox");
+        let darkthing = document.getElementById("darker");
+        let themetext = document.getElementById("dropdown-one");
+		box.style.width = "28%";
+		darkthing.style = "background: rgba(48, 48, 48, 0.479); pointer-events: auto; ";
+		themetext.style = "display: contents; ";
+
+    }
+
+    function close_menu(){
+        let box = document.getElementById("leftbox");
+        let darkthing = document.getElementById("darker");
+        let themetext = document.getElementById("dropdown-one");
+        box.style.width = "0%";
+        darkthing.style = "background: rgba(48, 48, 48, 0); pointer-events: none; ";
+        themetext.style = "display: relative; ";
+
+    }
+
+      function paste(){
+        navigator.clipboard.readText().then(
+        clipText  =>  document.getElementById("inputnote").value += clipText
+        );
+      }
+
+</script>
+
+<style>
+    @import url("https://fonts.googleapis.com/css?family=Muli:300,400,700,900");
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+html {
+	background-repeat: no-repeat;
+	background-size: cover;
+	font-family: "Muli", sans-serif;
+	color: #333333;
+}
+
+/* popup */
+.overlay {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	transition: opacity 200ms;
+	visibility: hidden;
+	opacity: 0;
+}
+.overlay.light {
+	background: rgba(255, 255, 255, 0.5);
+}
+.overlay .cancel {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	cursor: default;
+}
+.overlay:target {
+	visibility: visible;
+	opacity: 1;
+}
+.popup-window {
+	margin: 17% auto;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #666;
+	width: 480px;
+	box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+	position: relative;
+	text-align: center;
+	border-radius: 15px;
+}
+.light .popup-window {
+	border-color: #aaa;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+.popup-window h2 {
+	margin-top: 0;
+	color: #666;
+	font-family: "Trebuchet MS", Tahoma, Arial, sans-serif;
+}
+.popup-window .close {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	top: 20px;
+	right: 20px;
+	opacity: 0.8;
+	transition: all 200ms;
+	font-size: 24px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #666;
+}
+.popup-window .close:hover {
+	opacity: 1;
+}
+.popup-window .content {
+	max-height: 400px;
+	overflow: auto;
+}
+.popup-window p {
+	margin: 0 0 1em;
+}
+.popup-window p:last-child {
+	margin: 0;
+}
+
+
+
+/* themes */
+.blue{
+	background: rgb(54,149,189);
+	background: radial-gradient(circle, rgba(54,149,189,1) 16%, rgba(71,87,175,1) 91%);  background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.purple{
+	background: rgb(54,149,189);
+	background: radial-gradient(circle, rgba(54,149,189,1) 16%, rgba(71,87,175,1) 91%);  background-repeat: no-repeat;
+	background-size: cover;
+	filter: hue-rotate(60deg);
+}
+
+.green{
+	background: rgb(54,149,189);
+	background: radial-gradient(circle, rgba(54,149,189,1) 16%, rgba(71,87,175,1) 91%);  background-repeat: no-repeat;
+	background-size: cover;
+	filter: hue-rotate(274deg);
+}
+
+/* navbar */
+.nav{
+	margin-top: 0%;
+	padding-left: 0%;
+	padding-right: 0%;
+	width: 100%;
+	height: 50px;
+	background: #f1f3f64f;
+	border-radius: 0 0 20px 20px;
+	box-shadow: inset 0 0 10px rgba(55, 84, 170, 0), inset 0 0 15px rgba(255, 255, 255, 0), 7px 7px 10px rgba(55, 84, 170, 0.15), -7px -7px 20px white, inset 0px 0px 4px rgba(255, 255, 255, 0.2);
+	display: flex;
+	align-items: center;
+}
+
+
+
+/* dowpdown */
+.dropper, .dropdown{
+	margin-left: 5%;
+	border: none;
+	background-color: transparent;
+}
+
+.dropper{
+	cursor: pointer;
+}
+
+.dropdown{
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content{
+	display: none;
+	position: absolute;
+	background-color: #f9f9f9;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	border-radius: 7px 7px 7px 7px;
+	z-index: 1;
+}
+
+#dropdown1{
+	width: 15vw;
+}
+
+.dropdown-content h4{
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown-content:hover {
+	background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+	display: block;
+}
+
+.themechoise{
+	cursor: pointer;
+	margin-top: 10%;
+	margin-bottom: 10%;
+	margin-left: 8%;
+}
+
+/* ------------------ */
+.container {
+	width: 100%;
+	height: 92vh;
+}
+
+.box {
+	flex-direction: column;
+	background: #f1f3f6;
+	border-radius: 20px;
+}
+
+.hidden{
+	display:none;
+}
+
+.visible{
+	display: flex;
+}
+
+
+#rightbox {
+	width: 80%;
+	height: 90%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: seashell;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+}
+
+#leftbox {
+	width: 0;
+	height: 100%;
+	align-items: center;
+	overflow-y: auto;
+	margin: 0 0 0 0;
+	position: absolute;
+	border-radius: 0;
+	display: flex;
+	transition: 0.3s;
+	box-shadow: inset 0 0 15px rgba(55, 84, 170, 0), inset 0 0 20px rgba(255, 255, 255, 0), 7px 7px 15px rgba(55, 84, 170, 0.15), -7px -7px 20px white, inset 0px 0px 4px rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-track{
+	border-radius: 10px;
+	background-color: transparent;
+	margin-top: 17px;
+	margin-bottom: 17px;
+
+}
+
+::-webkit-scrollbar{
+	width: 6px;
+	background-color: transparent;
+
+}
+
+::-webkit-scrollbar-thumb{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: rgba(212, 212, 212, 0.651);
+}
+
+#column{
+	background: rgba(255, 255, 255, 0.01);
+	box-shadow: 2px 2px 20px 5px rgb(0 0 0 / 10%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	width: 90%;
+	height: 12%;
+	margin-top: 5%;
+	margin-bottom: 0%;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+}
+
+.column2unselected{
+	margin-top: 3%;
+	background: rgba(255, 255, 255, 0.01);
+	box-shadow: 2px 2px 20px 5px rgb(0 0 0 / 10%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	width: 90%;
+	height: 65px;
+	align-items: center;
+	text-align: left;
+	justify-content: center;
+}
+
+.column2selected{
+	margin-top: 3%;
+	border-radius: 20px;
+	width: 90%;
+	height: 65px;
+	align-items: center;
+	text-align: left;
+	justify-content: center;
+	background-color: rgba(150,150,150);
+	box-shadow: 2px 2px 20px 5px rgb(0 0 0 / 10%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: whitesmoke;
+
+}
+
+#form{
+	width: 95%;
+	height: 95%;
+}
+
+#inputtitle{
+	font-family: "Muli", sans-serif;
+	margin-left: 2%;
+	margin-top: 1%;
+	width: 30%;
+	height: 10%;
+	font-size: 25px;
+	color: black;
+	background: rgba(255, 255, 255, 0.65);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.05);
+	border: transparent;
+	border-radius: 15px;
+	text-align: center;
+}
+
+#inputnote{
+	resize: none;
+	margin-left: 2%;
+	margin-top: 3%;
+	width: 92%;
+	height: 70%;
+	color: black;
+	background: rgba(255, 255, 255, 0.65);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.15);
+	border: transparent;
+	border-radius: 15px;
+	font-size: 15px;
+	text-align: left;
+	font-family: "Muli", sans-serif;
+	padding-left: 2%;
+	padding-right: 2%;
+	padding-bottom: 2%;
+	padding-top: 2%;
+
+}
+#inputtitle:focus, #inputnote:focus{
+	border: none;
+	outline: none !important;
+}
+
+#inputtitle:focus::placeholder, #inputnote:focus::placeholder{
+	color: transparent;
+}
+
+#newbutton{
+	width: 15%;
+	height: 80%;
+	float: right;
+	margin-right: 7%;
+	margin-top: 2%;
+	background-color: #f1f3f6;
+	border: transparent;
+	border-radius: 15px;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+#savebutton{
+	width: 60px;
+	height: 60px;
+	float: right;
+	margin-right: 5%;
+	margin-top: 1%;
+	color: seashell;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	font-size: 25px;
+	cursor: pointer;
+}
+#deletebutton{
+	width: 60px;
+	height: 60px;
+	float: right;
+	margin-right: 3%;
+	margin-top: 1%;
+	color: seashell;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 15px;
+	font-size: 25px;
+	cursor: pointer;
+
+}
+
+#sharebutton{
+	width: 60px;
+	height: 60px;
+	float: right;
+	margin-right: 3%;
+	margin-top: 1%;
+	color: seashell;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 15px;
+	font-size: 25px;
+	cursor: pointer;
+	text-align: center;
+
+}
+#menubutton{
+	width: 4%;
+	height: 75%;
+	float: left;
+	margin-left: 3%;
+	margin-top: 0%;
+	color: seashell;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 15px;
+	font-size: 25px;
+	cursor: pointer;
+}
+
+
+#newnote{
+	float: left;
+	padding: 0 0 0 0;
+	margin-left: 8%;
+	margin-top: 8%;
+
+}
+
+
+
+#darker{
+	width: 100%;
+	height: 100%;
+	color: rgba(48, 48, 48, 0.479);
+	position: absolute;
+	pointer-events: none;
+	display: flex;
+	transition: 0.3s;
+
+}
+
+
+
+
+
+#copybutton{
+	margin-top: 5%;
+	width: 100px;
+	height: 40px;
+	color: black;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 10px 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 15px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: center;
+}
+
+#idinput{
+	width: 380px;
+	height: 20px;
+}
+
+
+#applybutton{
+	height: 30px;
+	margin-left: 4%;
+	color: black;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.01);
+	box-shadow: 2px 2px 10px 5px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 10px;
+	font-size: 15px;
+	cursor: pointer;
+	text-align: center;
+}
+
+.popup {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.popup .popuptext {
+	visibility: hidden;
+	width: 160px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 8px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 125%;
+	left: 50%;
+	margin-left: -80px;
+}
+
+.popup .popuptext::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #555 transparent transparent transparent;
+}
+
+.popup .show {
+	visibility: visible;
+	-webkit-animation: fadeIn 1s;
+	animation: fadeIn 1s;
+}
+
+html {
+	visibility: visible;
+	opacity: 1;
+}
+
+</style>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" style='height: 100vh'>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome To Notes50</title>
+   <script src="https://unpkg.com/feather-icons"></script>
+
+</head>
+
+<body style='margin: 0 0 0 0; height: 100%;' class="">
+<div id="page" class="blue" style="width: 100%;height: 100%;">
+
+<div class='container'>
+
+    <div class="box">
+		<form style="text-align: center;">
+			<p style="font-size: 50px; margin: 0;">Welcome To Notes50!</p>
+			<h5>Done as a CS50 final project by Kiyarash Farahani<br><br>Take notes, save them, access them in multiple devices, share them with direct link!</h5>
+			<button class="button" formaction="/login">Login</button>
+			or
+			<button class="button" formaction="/signup">Signup</button>
+
+		</form>
+    </div>
+</div>
+</div>
+
+
+<style>
+    @import url("https://fonts.googleapis.com/css?family=Muli:300,400,700,900");
+.box, .container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+html {
+	background: #f1f3f6;
+	font-family: "Muli", sans-serif;
+	color: #333333;
+}
+
+.blue{
+	background: rgb(54,149,189);
+	background: radial-gradient(circle, rgba(54,149,189,1) 16%, rgba(71,87,175,1) 91%);  background-repeat: no-repeat;
+	background-size: cover;
+	transition: filter 20s;
+
+}
+
+#page:hover{
+	filter: hue-rotate(400deg);
+}
+
+.container {
+	width: 100%;
+	height: 100vh;
+}
+
+
+.box {
+	flex-direction: column;
+	width: 52%;
+	height: 60%;
+	background: #f1f3f6;
+	background: rgba(255, 255, 255, 0.65);
+	-webkit-box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 30px 24px rgba(0, 0, 0, 0.15);
+	border: transparent;
+	border-radius: 15px;
+	text-align: center;
+}
+
+.button{
+	width: 80px;
+	height: 40px;
+	color: darkblue;
+	font-size: 15px;
+	font-family: 'Muli';
+	margin-left: 2%;
+	margin-right: 2%;
+	background: rgba(255, 255, 255, 0.01);
+	-webkit-box-shadow: 2px 2px 15px 12px rgb(0 0 0 / 1%);
+	box-shadow: 2px 2px 20px 10px rgb(0 0 0 / 10%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 15px;
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 15px;
+	cursor: pointer;
+	text-align: center;
+
+}
+</style>
+
+</body>
+</html>
